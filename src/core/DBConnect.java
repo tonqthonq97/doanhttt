@@ -4,7 +4,7 @@ import java.sql.*;
 public class DBConnect {
 static String HOST = "13.70.25.1";
 static String PORT = "3306";
-static String DBNAME = "mydb";
+static String DBNAME = "doanhttt";
 static String USERNAME = "doanhttt";
 static String PASS = "emkay";
 Connection con = null;
@@ -43,5 +43,28 @@ public ResultSet executeSQL(String sql) {
 		return null;
 	}
 }
+public int executeUpdate(String sql) {
+	try {
+		return this.state.executeUpdate(sql);
+	} catch (SQLException e) {
+		System.out.println(e.getMessage());
+		return 0;
+	}
+}
+public int countExecuteSQL(String sql) {
+	try {
+		ResultSet rs = this.state.executeQuery(sql);
+		int count = 0;
+		while(rs.next()) {
+			count++;
+		}
+		return count;
+	} catch (SQLException e) {
+		System.out.println(e.getMessage());
+		return 0;
+	}
+}
+
+
 
 }

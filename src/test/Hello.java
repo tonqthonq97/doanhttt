@@ -49,7 +49,7 @@ public class Hello {
 			while(rs.next()) {
 				listRs.add(rs.getObject(2));
 			}
-			return new ResultAPI(1,listRs );
+			return new ResultAPI(1,new Hien("gad",1) );
 		} else {
 			return new ResultAPI(0, "khong ket noi dc db");
 		}
