@@ -88,10 +88,11 @@ public class Hello {
 	@Path("/qr")
 	@Produces(MediaType.TEXT_HTML)
 	public String sayaHelloHTML(@QueryParam("text") String text) {
-		String link = "./100.png";
+		String link = "C:/xampp/htdocs/img/100.png";
 		try {
 			QRCreater.generateQRCodeImage(text, 500, 500, link);
-			return "<img src='100.png>";
+			System.out.println("DUng");
+			return "<img src='http://13.70.25.1/img/100.png'>" ;
 		} catch (WriterException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
