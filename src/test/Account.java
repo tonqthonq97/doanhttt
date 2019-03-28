@@ -81,15 +81,15 @@ public class Account {
 	}
 	
 	@POST
-	@Path("/register")
+	@Path("/register_patient")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResultAPI register (String [] input) throws SQLException {
-		String sdt=input[0];
-		String name=input[1];
-		String birth=input[2];
-		String gender=input[3];
-		String insurrance=input[4];
-		String add=input[5];
+	public ResultAPI registerPatient (Object [] input) throws SQLException {
+		String sdt=String.valueOf(input[0]);
+		String name=String.valueOf(input[1]);
+		String birth=String.valueOf(input[2]);
+		String gender=String.valueOf(input[3]);
+		String insurrance=String.valueOf(input[4]);
+		String add=String.valueOf(input[5]);
 		
 		DBConnect db=new DBConnect();
 		String sql="select username from user where username='"+sdt+"'";
@@ -119,7 +119,44 @@ public class Account {
 				}
 
 	
-	
+	@POST
+	@Path("/register_doctor")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResultAPI registerDoctor(Object[] input) throws SQLException {
+		String sdt=String.valueOf(input[0]);
+		String name=String.valueOf(input[1]);
+		String gender=String.valueOf(input[2]);
+		String chuyenkhoa=String.valueOf(input[3]);
+		
+		DBConnect db=new DBConnect();
+		String sql="select username from user where username='"+sdt+"'";
+		int count=db.countExecuteSQL(sql);
+		String sqll="select idChuyenKhoa from chuyenkhoa where idChuyenKhoa='"+chuyenkhoa+"'";
+		int count1=db.countExecuteSQL(sqll);
+		if(count==1) {
+			return new ResultAPI(DEFINE.ERR_USER_EXIST,"da ton tai");
+		}
+		else if(count1==0) {
+			return new ResultAPI(DEFINE.ERR_CHUYENKHOA_DONT_EXIST, "chuyen khoa chua ton tai");
+		}
+		else {
+			String sql1="insert into user(username,password,role) value('"+sdt+"','"+MD5.getMd5("0000")+"','"+DEFINE.ROLE_DOCTOR+"')";
+			System.out.println(sql1);
+			int is=db.executeUpdate(sql1);
+			if(is==0) {
+				return new ResultAPI(DEFINE.ERR_DB_CONNECT, "loi ket noi");
+			}
+			String sql2="select iduser from user where username='"+sdt+"'";
+			ResultSet rs2=db.executeSQL(sql2);
+			rs2.next();
+			String idUser=rs2.getString(1);
+			String insert="insert into bacsi(hoten,gender,sodienthoai,idPhongban,idUser) value ('"
+					+name+"','"+gender+"','"+sdt+"','"+chuyenkhoa+"','"+idUser+"')";
+			System.out.println(insert);
+			int ins=db.executeUpdate(insert);
+			return new ResultAPI(ins, "ok");
+		}
+	}
 	
 	
 	
