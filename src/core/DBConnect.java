@@ -43,6 +43,29 @@ public ResultSet executeSQL(String sql) {
 		return null;
 	}
 }
+public int executeUpdate(String sql) {
+	try {
+		return this.state.executeUpdate(sql);
+	} catch (SQLException e) {
+		System.out.println(e.getMessage());
+		return 0;
+	}
+}
+public int countExecuteSQL(String sql) {
+	try {
+		ResultSet rs = this.state.executeQuery(sql);
+		int count = 0;
+		while(rs.next()) {
+			count++;
+		}
+		return count;
+	} catch (SQLException e) {
+		System.out.println(e.getMessage());
+		return 0;
+	}
+}
+
+
 
 public int executeUpdate(String sql) {
 	try {
