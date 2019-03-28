@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.zxing.WriterException;
+
 import core.DBConnect;
 import core.ResultAPI;
 
@@ -35,7 +37,7 @@ public class Hello {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResultAPI sayHelloHTML(@HeaderParam("userName")String userName, @HeaderParam("pass")String Pass) throws SQLException {
+	public ResultAPI sayHelloHTML(@HeaderParam("userName") String userName, @HeaderParam("pass")String Pass) throws SQLException {
 		if(userName==null||Pass==null) return new ResultAPI(3, "Khong co thong tin dang nhap");
 		if(!(userName.equals("hien")&&Pass.equals("hien"))) {
 			return new ResultAPI(0,null);
@@ -43,13 +45,15 @@ public class Hello {
 		
 		DBConnect db = new DBConnect();
 		if(db.isConnect()) {
-			String sql = "select * from phongban";
+			String sql = "select * from user";
 			ArrayList<Object> listRs = new ArrayList<>();
 			ResultSet rs = db.executeSQL(sql);
 			while(rs.next()) {
 				listRs.add(rs.getObject(2));
 			}
-			return new ResultAPI(1,new Hien("gad",1) );
+			sql = "INSERT INTO `doanhttt`.`user` (`idUser`, `UserName`, `Password`, `QR`, `Role`) VALUES ('2', 'hien', 'kasdkajsdiudaj', '12', '2');";
+			System.out.println(db.executeUpdate(sql));
+			return new ResultAPI(1,listRs );
 		} else {
 			return new ResultAPI(0, "khong ket noi dc db");
 		}
@@ -68,7 +72,7 @@ public class Hello {
 	@GET
 	@Path("/add")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String sayHelloHTML(@HeaderParam("userName")String userName, @HeaderParam("pass")String Pass,@QueryParam("key") String key, @QueryParam("value") String value) {
+	public String sayaHelloHTML(@QueryParam("key") String key, @QueryParam("value") String value) {
 		int value1;
 		System.out.println("--" + key + " ---- " + value);
 		try {
@@ -78,6 +82,26 @@ public class Hello {
 		}
 		Hien.list.add(new Hien(key,value1));
 		return "Add complete";
+	}
+	
+	@GET
+	@Path("/qr")
+	@Produces(MediaType.TEXT_HTML)
+	public String sayaHelloHTML(@QueryParam("text") String text) {
+		String link = "./100.png";
+		try {
+			QRCreater.generateQRCodeImage(text, 500, 500, link);
+			return "<img src='100.png>";
+		} catch (WriterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 }
 
