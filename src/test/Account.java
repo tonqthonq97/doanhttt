@@ -159,7 +159,26 @@ public class Account {
 	}
 	
 	
-	
+	@POST
+	@Path("/update_pass")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResultAPI updatePasswordUser(String[]input) {
+		String token=input[0];
+		String newpass=input[1];
+		DBConnect db=new DBConnect();
+		String sltoken="select token from user where token='"+token+"'";
+		System.out.println(sltoken);
+		int count=db.countExecuteSQL(sltoken);
+		if(count==0) {
+			return new ResultAPI(DEFINE.ERR_USER_DONTCORRECT, "tai khoan k dung");
+		}
+		else {
+			String udpass="update user set pass='"+newpass+"' where token='"+token+"'";
+			System.out.println(udpass);
+			int rs=db.executeUpdate(udpass);
+			return new ResultAPI(rs, "ok"); 
+		}
+	}
 }
 
 
