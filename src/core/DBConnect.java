@@ -13,7 +13,7 @@ Statement state = null;
 public DBConnect() {
 	try {
 		Class.forName("com.mysql.jdbc.Driver");
-		this.con = DriverManager.getConnection("jdbc:mysql://"+HOST+":"+PORT+"/"+DBNAME, USERNAME, PASS);
+		this.con = DriverManager.getConnection("jdbc:mysql://"+HOST+":"+PORT+"/"+DBNAME+"?useUnicode=true&characterEncoding=utf-8", USERNAME, PASS);
 		} catch (Exception e ) {
 			System.out.println(e.toString());
 		}
@@ -64,8 +64,6 @@ public int countExecuteSQL(String sql) {
 		return 0;
 	}
 }
-
-
 
 
 
