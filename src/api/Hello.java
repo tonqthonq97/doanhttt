@@ -1,4 +1,4 @@
-package test;
+package api;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -91,7 +91,6 @@ public class Hello {
 		String link = "C:/xampp/htdocs/img/100.png";
 		try {
 			QRCreater.generateQRCodeImage(text, 500, 500, link);
-			System.out.println("DUng");
 			return "<img src='http://13.70.25.1/img/100.png'>" ;
 		} catch (WriterException e) {
 			// TODO Auto-generated catch block

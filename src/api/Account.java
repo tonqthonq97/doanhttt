@@ -1,4 +1,4 @@
-package test;
+package api;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -10,6 +10,9 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+
+import com.google.gson.JsonObject;
 
 import core.DBConnect;
 import core.DEFINE;
@@ -24,8 +27,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.json.Json;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+
 
 
 
@@ -100,6 +105,20 @@ public class Account {
 			return new ResultAPI(DEFINE.ERR_USER_EXIST,"da ton tai");
 		}
 		else {
+			String qrCodeString = "";
+			String qrLink = "http://13.70.25.1/img/";
+			Random rd = new Random();
+			for(int i = 0; i<64;i++) {
+				qrCodeString+=rd.nextInt(9);
+			}
+			String link = "C:/xampp/htdocs/img/"+qrCodeString+".png";
+			try {
+				QRCreater.generateQRCodeImage(qrCodeString, 500, 500, link);
+				
+			} catch(Exception e) {
+				System.out.println(e.toString());
+			}
+			
 			String sql1="insert into user(username,password,role) value('"+sdt+"','"+MD5.getMd5("0000")+"','"+DEFINE.ROLE_PATIENT+"')";
 			System.out.println(sql1);
 			int is=db.executeUpdate(sql1);
@@ -114,7 +133,7 @@ public class Account {
 					+name+"','"+birth+"','"+gender+"','"+add+"','"+sdt+"','"+insurrance+"','"+idUser+"')";
 			System.out.println(insert);
 			int ins=db.executeUpdate(insert);
-			return new ResultAPI(ins, "ok");
+			return new ResultAPI(ins, qrLink+qrCodeString+".png");
 		}
 				}
 
@@ -156,10 +175,7 @@ public class Account {
 			int ins=db.executeUpdate(insert);
 			return new ResultAPI(ins, "ok");
 		}
-	}
-	
-	
-	
+	}	
 }
 
 
