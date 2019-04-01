@@ -1,5 +1,6 @@
 package core;
 public class DEFINE{
+	public static int ERR_QR_DONT_CORRECT = 9;
 	public static int ERR_PASS_DONT_CORRECT=8;
 	public static int ERR_USER_NOT_EXIST=7;
 	public static int ERR_NOT_ENOUGH_INFO=6;

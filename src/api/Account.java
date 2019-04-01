@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.tomcat.util.compat.JreCompat;
+
 import com.google.gson.JsonObject;
 
 import core.DBConnect;
@@ -291,6 +293,34 @@ public class Account {
 					return doctor.toString();
 				}
 			}
+		}
+	}
+	
+	// QR to userName 
+	
+	@POST
+	@Path("/checkQR")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Object checkQR(@Context HttpServletResponse rep, String QR) throws SQLException {
+		rep.setHeader("access-control-allow-origin", "*");
+		if(QR==null) return new ResultAPI(DEFINE.ERR_NOT_ENOUGH_INFO, "k co QR");
+		
+		DBConnect db = new DBConnect();
+		String sql = "select userName from user where QR='" + QR + "'";
+		
+		int count = db.countExecuteSQL(sql);
+		if (count == 0) {
+			return new ResultAPI(DEFINE.ERR_QR_DONT_CORRECT, "QR khong ton tai");
+		} else {
+			ResultSet rs=null;
+			rs = db.executeSQL(sql);
+			rs.next();
+			String userName = rs.getString(1);
+			JsonObject JReturn = new JsonObject();;
+			JReturn.addProperty("errCode", DEFINE.SUCCESS);
+			JReturn.addProperty("userName", userName);
+			
+			return JReturn.toString();
 		}
 	}
 

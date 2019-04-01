@@ -69,6 +69,21 @@ public int countExecuteSQL(String sql) {
 	}
 }
 
+public int countExecuteSQL(String sql, ResultSet rs) {
+	System.out.println(sql);
+	try {
+		rs = this.state.executeQuery(sql);
+		int count = 0;
+		while(rs.next()) {
+			count++;
+		}
+		return count;
+	} catch (SQLException e) {
+		System.out.println(e.getMessage());
+		return 0;
+	}
+}
+
 
 
 
