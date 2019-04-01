@@ -11,6 +11,7 @@ Connection con = null;
 Statement state = null;
 
 public DBConnect() {
+	
 	try {
 		Class.forName("com.mysql.jdbc.Driver");
 		this.con = DriverManager.getConnection("jdbc:mysql://"+HOST+":"+PORT+"/"+DBNAME+"?useUnicode=true&characterEncoding=utf-8", USERNAME, PASS);
@@ -36,6 +37,7 @@ public boolean isConnect() {
 }
 
 public ResultSet executeSQL(String sql) {
+	System.out.println(sql);
 	try {
 		return this.state.executeQuery(sql);
 	} catch (SQLException e) {
@@ -44,6 +46,7 @@ public ResultSet executeSQL(String sql) {
 	}
 }
 public int executeUpdate(String sql) {
+	System.out.println(sql);
 	try {
 		return this.state.executeUpdate(sql);
 	} catch (SQLException e) {
@@ -52,6 +55,7 @@ public int executeUpdate(String sql) {
 	}
 }
 public int countExecuteSQL(String sql) {
+	System.out.println(sql);
 	try {
 		ResultSet rs = this.state.executeQuery(sql);
 		int count = 0;

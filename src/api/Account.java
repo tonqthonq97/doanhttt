@@ -41,8 +41,10 @@ public class Account {
 	@POST
 	@Path("/login")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResultAPI login(@Context HttpServletResponse rep, String[] input) throws SQLException {
-		rep.setHeader("access-control-allow-origin", "*");
+	public Object login(@Context HttpServletResponse rep, String[] input) throws SQLException {
+		//rep.setHeader("Access-Control-Allow-Origin", "*");
+		//rep.setHeader("access-control-expose-headers","access-control-allow-origin,access-control-expose-headers,access-control-allow-headers,content-type,content-length,date,connection,x-final-url");
+		//rep.setHeader("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token");
 		String userName = input[0];
 		String pass = input[1];
 		if (userName == null || pass == null) {
@@ -76,9 +78,14 @@ public class Account {
 				String sql2 = "update user set token='" + stRandom + "'where username='" + userName + "'";
 				System.out.println(sql2);
 				int rs2 = db.executeUpdate(sql2);
-				return new ResultAPI(DEFINE.SUCCESS, "OK");
+				JsonObject retu = new JsonObject();
+				retu.addProperty("errCode", DEFINE.SUCCESS);
+				retu.addProperty("token", stRandom);
+				retu.addProperty("role",Integer.parseInt(UserUtill.getUserByToken(stRandom).getRole()));
+				
+				return retu.toString();
 			}
-
+			return new ResultAPI(DEFINE.ERR_PASS_DONT_CORRECT, "Sai username hoac mat khau");
 		}
 		return new ResultAPI(DEFINE.ERR_DB_CONNECT, "ket noi du lieu");
 

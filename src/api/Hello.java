@@ -22,8 +22,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Context;
 
 
 
@@ -37,8 +39,10 @@ public class Hello {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResultAPI sayHelloHTML(@HeaderParam("userName") String userName, @HeaderParam("pass")String Pass) throws SQLException {
+	public ResultAPI sayHelloHTML(@Context HttpServletResponse rep,@HeaderParam("userName") String userName, @HeaderParam("pass")String Pass) throws SQLException {
+		rep.setHeader("Access-Control-Allow-Origin", "*");
 		if(userName==null||Pass==null) return new ResultAPI(3, "Khong co thong tin dang nhap");
+		
 		if(!(userName.equals("hien")&&Pass.equals("hien"))) {
 			return new ResultAPI(0,null);
 		}
