@@ -9,6 +9,7 @@ public class DEFINE{
 	public static int ERR_LOGIN_FALSE = 2;
 	public static int ERR_CHUYENKHOA_DONT_EXIST=1;
 	public static int ERR_USER_DONTCORRECT=5;
+	public static int ERR_NOT_PERMISSION =10;
 	public static int SUCCESS=0;
 	
 	//--------------------- role-------

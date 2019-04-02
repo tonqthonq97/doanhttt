@@ -116,8 +116,22 @@ public class Account {
 			if (count == 1 || count1 == 1) {
 				return new ResultAPI(DEFINE.ERR_USER_EXIST, "da ton tai");
 			} else {
-				String sql1 = "insert into user(username,password,role) value('" + sdt + "','" + MD5.getMd5("0000")
-						+ "','" + DEFINE.ROLE_PATIENT + "')";
+				String qrCodeString = "";
+				String qrLink = "http://13.70.25.1/img/";
+				Random rd = new Random();
+				for(int i = 0; i<64;i++) {
+					qrCodeString+=rd.nextInt(9);
+				}
+				String link = "C:/xampp/htdocs/img/"+qrCodeString+".png";
+				try {
+					QRCreater.generateQRCodeImage(qrCodeString, 500, 500, link);
+					
+				} catch(Exception e) {
+					System.out.println(e.toString());
+				}
+				
+				String sql1 = "insert into user(username,password,role,QR) value('" + sdt + "','" + MD5.getMd5("0000")
+						+ "','" + DEFINE.ROLE_PATIENT + "','"+qrCodeString+"')";
 				System.out.println(sql1);
 				int is = db.executeUpdate(sql1);
 				if (is == 0) {
@@ -132,7 +146,7 @@ public class Account {
 						+ idUser + "')";
 				System.out.println(insert);
 				int ins = db.executeUpdate(insert);
-				return new ResultAPI(ins, "ok");
+				return new ResultAPI(0, qrLink+qrCodeString+".png");
 			}
 		}
 	}
@@ -355,6 +369,34 @@ public class Account {
 			if(rsUpdate==0) return new ResultAPI(DEFINE.ERR_DB_CONNECT, "khong ket noi dc DB");
 			return new ResultAPI(DEFINE.SUCCESS, "thanh cong");
 		}
+	}
+	
+	@POST
+	@Path("/creatQR")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Object creatQR(@HeaderParam("token") String token, @Context HttpServletResponse rep, String userName) throws SQLException {
+		User user = UserUtill.getUserByToken(token);
+		if(user==null) return new ResultAPI(DEFINE.ERR_LOGIN_FALSE, "Dang nhap khong thanh cong");
+		String userID = user.getIdUser();
+		if( !user.getRole().equals(String.valueOf(DEFINE.ROLE_RECIP)) ) return new ResultAPI(DEFINE.ERR_NOT_PERMISSION,"khong co quyen");
+		String qrCodeString = "";
+		String qrLink = "http://13.70.25.1/img/";
+		Random rd = new Random();
+		for(int i = 0; i<64;i++) {
+			qrCodeString+=rd.nextInt(9);
+		}
+		String link = "C:/xampp/htdocs/img/"+qrCodeString+".png";
+		try {
+			QRCreater.generateQRCodeImage(qrCodeString, 500, 500, link);
+		} catch(Exception e) {
+			return new ResultAPI(DEFINE.ERR_DB_CONNECT, "Khong khoi tao dc QR");
+		}
+		
+		DBConnect db = new DBConnect();
+		String sql = "update user set QR = '"+qrCodeString+"' where userName = '"+userName+"'";
+		int rsUpdate = db.executeUpdate(sql);
+		if(rsUpdate==0) return new ResultAPI(DEFINE.ERR_USER_DONTCORRECT, "UserName khong dung");
+		return new ResultAPI(DEFINE.SUCCESS, qrLink+qrCodeString+".png");
 	}
 
 }
