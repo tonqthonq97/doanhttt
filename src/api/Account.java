@@ -323,5 +323,38 @@ public class Account {
 			return JReturn.toString();
 		}
 	}
+	
+	@POST
+	@Path("/updatePassByQR")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Object updatePassByQR(@Context HttpServletResponse rep, Object[] input) throws SQLException {
+		rep.setHeader("access-control-allow-origin", "*");
+		String QR="",newPass="";
+		try {
+			QR = String.valueOf(input[0]);
+			newPass = String.valueOf(input[1]);
+		} catch(Exception e) {
+			return new ResultAPI(DEFINE.ERR_NOT_ENOUGH_INFO, "k co du thong tin");
+		};
+		
+		if(QR==""||newPass=="") return new ResultAPI(DEFINE.ERR_NOT_ENOUGH_INFO, "Khong day du thong tin");
+		
+		DBConnect db = new DBConnect();
+		String sql = "select userName from user where QR='" + QR + "'";
+		
+		int count = db.countExecuteSQL(sql);
+		if (count == 0) {
+			return new ResultAPI(DEFINE.ERR_QR_DONT_CORRECT, "QR khong ton tai");
+		} else {
+			String md5Pass = MD5.getMd5(newPass);
+			sql = "update user set password = '"+md5Pass+"' where QR = '"+QR+"'";
+			int rsUpdate = db.executeUpdate(sql);
+			if(rsUpdate==0) return new ResultAPI(DEFINE.ERR_DB_CONNECT, "khong ket noi dc DB");
+			sql = "update user set QR = '' where QR='"+QR+"'";
+			rsUpdate = db.executeUpdate(sql);
+			if(rsUpdate==0) return new ResultAPI(DEFINE.ERR_DB_CONNECT, "khong ket noi dc DB");
+			return new ResultAPI(DEFINE.SUCCESS, "thanh cong");
+		}
+	}
 
 }
